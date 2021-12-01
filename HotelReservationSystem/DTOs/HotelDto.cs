@@ -28,10 +28,7 @@ namespace HotelReservationSystem.DTOs
         public int Stars { get; set; }
 
         [Required]
-        [Range(1, 1000)]
-        public double PricePerNight { get; set; }
-
-        [Required]
-        public bool IsAllInclusive { get; set; }
+        [Display(Name = "Deactivate")]
+        public bool IsInactive { get; set; }
     }
 }

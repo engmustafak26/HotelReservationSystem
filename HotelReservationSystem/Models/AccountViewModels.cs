@@ -69,6 +69,11 @@ namespace HotelReservationSystem.Models
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name = "Full Name")]
+        [StringLength(250, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
+        public string Name { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
@@ -87,6 +92,9 @@ namespace HotelReservationSystem.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Display(Name = "Hotel Admin")]
+        public bool IsHotelAdmin { get; set; }
     }
 
     public class ResetPasswordViewModel

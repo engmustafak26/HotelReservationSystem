@@ -23,7 +23,7 @@ namespace HotelReservationSystem.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -35,9 +35,9 @@ namespace HotelReservationSystem.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -121,7 +121,7 @@ namespace HotelReservationSystem.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -154,6 +154,7 @@ namespace HotelReservationSystem.Controllers
             {
                 var user = new ApplicationUser
                 {
+                    Name = model.Name,
                     UserName = model.Email,
                     Email = model.Email,
                     Phone = model.Phone
@@ -163,13 +164,22 @@ namespace HotelReservationSystem.Controllers
                 {
                     /* Creating Admin
                      * 
-                     * var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
-                    var roleManager = new RoleManager<IdentityRole>(roleStore);
-                    await roleManager.CreateAsync(new IdentityRole("CanManageHotels"));
-                    await UserManager.AddToRoleAsync(user.Id, "CanManageHotels"); */
+                     */
+                    if (model.IsHotelAdmin)
+                    {
+                        //var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+                        //var roleManager = new RoleManager<IdentityRole>(roleStore);
+                        //await roleManager.CreateAsync(new IdentityRole("CanManageHotels"));
+                        await UserManager.AddToRoleAsync(user.Id, RoleName.CanManageHotels);
+                    }
+                    else
+                    {
+                        await UserManager.AddToRoleAsync(user.Id, RoleName.Customer);
 
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    }
+
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);

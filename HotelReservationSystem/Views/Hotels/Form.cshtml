@@ -8,38 +8,54 @@
 
 @using (Html.BeginForm("Save", "Hotels"))
 {
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+
     <div class="form-group">
         @Html.LabelFor(c => c.Hotel.Name)
         @Html.TextBoxFor(c => c.Hotel.Name, new { @class = "form-control" })
-        @Html.ValidationMessageFor(c => c.Hotel.Name)
+        @Html.ValidationMessageFor(c => c.Hotel.Name, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
         @Html.LabelFor(c => c.Hotel.Stars)
         @Html.TextBoxFor(c => c.Hotel.Stars, new { @class = "form-control" })
-        @Html.ValidationMessageFor(c => c.Hotel.Stars)
+        @Html.ValidationMessageFor(c => c.Hotel.Stars, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
         @Html.LabelFor(c => c.Hotel.CountryId)
         @Html.DropDownListFor(m => m.Hotel.CountryId, new SelectList(Model.Countries, "Id", "Name"), "", new { @class = "form-control" })
-        @Html.ValidationMessageFor(c => c.Hotel.CountryId)
-        @Html.ActionLink("Add new country", "NewCountry", "Hotels", null, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Hotel.CountryId, "", new { @class = "text-danger" })
+        @Html.ActionLink("Add new country", "NewCountry", "Hotels", null, new { @class = "" })
     </div>
     <div class="form-group">
         @Html.LabelFor(c => c.Hotel.City)
         @Html.TextBoxFor(c => c.Hotel.City, new { @class = "form-control" })
-        @Html.ValidationMessageFor(c => c.Hotel.City)
+        @Html.ValidationMessageFor(c => c.Hotel.City, "", new { @class = "text-danger" })
+    </div>
+    <hr />
+    <h3>Settings</h3>
+    <hr />
+    <div class="form-group">
+        @Html.LabelFor(c => c.Hotel.FreeCancelationDaysBeforeReservationDate)
+        @Html.EditorFor(c => c.Hotel.FreeCancelationDaysBeforeReservationDate, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Hotel.FreeCancelationDaysBeforeReservationDate, "", new { @class = "text-danger" })
     </div>
     <div class="form-group">
-        @Html.LabelFor(c => c.Hotel.PricePerNight)
-        @Html.TextBoxFor(c => c.Hotel.PricePerNight, new { @class = "form-control" })
-        @Html.ValidationMessageFor(c => c.Hotel.PricePerNight)
+        @Html.LabelFor(c => c.Hotel.DeductionPercentageForReservationCancelation)
+        @Html.EditorFor(c => c.Hotel.DeductionPercentageForReservationCancelation, new { @class = "form-control" })%
+        @Html.ValidationMessageFor(c => c.Hotel.DeductionPercentageForReservationCancelation, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(c => c.Hotel.CheckinTime)
+        @Html.EditorFor(c => c.Hotel.CheckinTime, new { @class = "form-control" })
+        @Html.ValidationMessageFor(c => c.Hotel.CheckinTime, "", new { @class = "text-danger" })
     </div>
     <div class="checkbox">
         <label>
-            @Html.CheckBoxFor(m => m.Hotel.IsAllInclusive) Allinclusive?
-            @Html.ValidationMessageFor(c => c.Hotel.IsAllInclusive)
+            @Html.CheckBoxFor(c => c.Hotel.IsInactive) @Html.LabelFor(c => c.Hotel.IsInactive, new { @class = "noPadding" })
+            @Html.ValidationMessageFor(c => c.Hotel.IsInactive, "", new { @class = "text-danger" })
         </label>
     </div>
+
 
     @Html.HiddenFor(c => c.Hotel.Id)
     @Html.AntiForgeryToken()
@@ -47,3 +63,6 @@
     <button type="submit" class="btn btn-primary">Save</button>
 }
 
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -28,11 +29,30 @@ namespace HotelReservationSystem.Models
         [Range(1,5)]
         public int Stars { get; set; }
 
-        [Required]
-        [Range(1, 1000)]
-        public double PricePerNight { get; set; }
+        [Display(Name = "Deactivate")]
+        public bool IsInactive { get; set; }
 
         [Required]
-        public bool IsAllInclusive { get; set; }
+        [Display(Name = "Free Cancelation - Days Before Reservation Date")]
+        [Range(0,30)]
+        public int FreeCancelationDaysBeforeReservationDate { get; set; }
+
+        [Required]
+        [Display(Name = "Deduction Percentage For Reservation Cancelation")]
+        [DisplayFormat(DataFormatString = "{0} %", ApplyFormatInEditMode = false)]
+        [Range(0, 100)]
+        public decimal DeductionPercentageForReservationCancelation { get; set; }
+
+        [Required]
+        [Display(Name = "Check-in Time")]
+        [DataType(DataType.Time)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = @"{0:hh\:mm}")]
+        public TimeSpan CheckinTime { get; set; } = new TimeSpan(10, 0, 0);
+
+        [Required]        
+        public string UserId { get; set; }
+
+        public ApplicationUser User { get; set; }
+        
     }
 }

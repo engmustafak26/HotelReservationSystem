@@ -1,0 +1,126 @@
+﻿@model HotelReservationSystem.DTOs.OrderDto
+
+@{
+    ViewBag.Title = (Model.Id == 0 ? "New" : "Edit");
+    var vs = Html.ValidationSummary(true, "", new { @class = "text-danger" })?.ToHtmlString();
+}
+
+
+    <h2>@(Model.Id == 0? "New": "Edit")</h2>
+
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+
+            <hr />
+            @Html.Raw(HttpUtility.HtmlDecode(String.IsNullOrWhiteSpace(vs)? "" : Html.ValidationSummary(true, "", new { @class = "text-danger" }).ToHtmlString()))
+@*@Html.ValidationSummary(true, "", new { @class = "text-danger" })*@
+@Html.HiddenFor(model => model.Id)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CustomerId, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.CustomerId, ViewBag.CustomerId as SelectList, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CustomerId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.HotelId, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.HotelId, (SelectList)ViewBag.HotelId, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.HotelId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.RoomId, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.RoomId, ViewBag.RoomId as SelectList, "", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.RoomId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DateOrdered, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DateOrdered, new { htmlAttributes = new { @class = "form-control datepicker" } })
+                    @Html.ValidationMessageFor(model => model.DateOrdered, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control datepicker" } })
+                    @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control datepicker" } })
+                    @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+
+        <script type="text/javascript">
+        $(document).ready(function () {
+
+
+        $('#DateOrdered').datetimepicker({
+            format: 'YYYY-MM-DD',
+            date: moment('@(Model.DateOrdered.ToString("s"))', 'YYYY-MM-DD').toDate()
+        });
+
+        if (@Model.Id != 0) {
+
+                $("#CustomerId").val(@Model.CustomerId);
+                $("#HotelId").val(@Model.HotelId);
+                $("#RoomId").val(@Model.RoomId);
+
+            $('#StartDate').datetimepicker({
+                format: 'YYYY-MM-DD',
+                date: moment('@(Model.StartDate.ToString("s"))', 'YYYY-MM-DD').toDate()
+            });
+            $('#EndDate').datetimepicker({
+                format: 'YYYY-MM-DD',
+                date: moment('@(Model.EndDate.ToString("s"))', 'YYYY-MM-DD').toDate()
+            });
+        }
+
+
+        $('#HotelId').change(function () {
+            var url = '@Url.Content("~/")' + "HotelOrders/GetRooms";
+            var ddlsource = "#HotelId";
+            $.getJSON(url, { HotelId: $(ddlsource).val() }, function (data) {
+                var items = "<option ></option>";
+                $("#RoomId").empty();
+                $.each(data, function (i, room) {
+                    items += "<option value='" + room.Value + "'>" + room.Text + "</option>";
+                });
+                $('#RoomId').html(items);
+            });
+        });
+    });
+        </script>
+    }

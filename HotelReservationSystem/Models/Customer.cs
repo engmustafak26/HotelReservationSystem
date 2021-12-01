@@ -14,6 +14,19 @@ namespace HotelReservationSystem.Models
         [MaxLength(255)]
         public string Name { get; set; }
 
+        [Required, MaxLength(255)]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+
+        [Display(Name ="Birth Date")]        
         public DateTime? Birthdate { get; set; }
+
+        [Display(Name ="Deactivate")]
+        public bool IsInactive { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
+
+        public ApplicationUser User { get; set; }
     }
 }

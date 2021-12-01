@@ -22,9 +22,13 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Customers", "Index", "Customers")</li>
-                    <li>@Html.ActionLink("Hotels", "Index", "Hotels")</li>
-                    <li>@Html.ActionLink("Orders", "Index", "Orders")</li>
+                    @if (User.IsInRole(HotelReservationSystem.Models.RoleName.CanManageHotels))
+                    {
+                        <li>@Html.ActionLink("Customers", "Index", "Customers")</li>
+                        <li>@Html.ActionLink("Hotels", "Index", "Hotels")</li>
+                        <li>@Html.ActionLink("Rooms", "Index", "Rooms")</li>
+                        <li>@Html.ActionLink("Reservations", "Index", "HotelOrders")</li>
+                    }
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
@@ -40,6 +44,27 @@
     </div>
 
     @Scripts.Render("~/bundles/lib")
+    @Scripts.Render("~/bundles/bootstrap")
+
     @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+
+        var ajaxError = function (xhr, status, error) {
+
+            if (xhr.status == 404)
+                toastr.error("Not Found");
+
+            if (xhr.responseText)
+                toastr.error(xhr.responseText);
+
+        }
+        $(function () {           
+
+            $('.datepicker').datetimepicker({
+                format: 'YYYY-MM-DD'
+            });
+        });
+    </script>
 </body>
 </html>

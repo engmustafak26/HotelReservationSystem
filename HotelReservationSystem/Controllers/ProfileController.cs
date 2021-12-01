@@ -11,16 +11,16 @@ using HotelReservationSystem.Models;
 namespace HotelReservationSystem.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ProfileController : Controller
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public ManageController()
+        public ProfileController()
         {
         }
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public ProfileController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -32,9 +32,9 @@ namespace HotelReservationSystem.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -52,6 +52,7 @@ namespace HotelReservationSystem.Controllers
 
         //
         // GET: /Manage/Index
+        [HttpGet]
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
@@ -63,11 +64,14 @@ namespace HotelReservationSystem.Controllers
                 : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
                 : "";
 
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
             {
+                Name = user.Name,
+                Email = User.Identity.GetUserName(),
                 HasPassword = HasPassword(),
-                PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
+                PhoneNumber = user.Phone,
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
@@ -75,6 +79,29 @@ namespace HotelReservationSystem.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<ActionResult> Index(IndexViewModel model)
+        {            
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+            if (ModelState.IsValid)
+            {
+                user.Name = model.Name;
+                user.Phone = model.PhoneNumber;
+                var result = UserManager.Update(user);
+                if (result.Succeeded)
+                {
+                    ViewBag.StatusMessage = "Profile Updated Successfuly";
+                }
+                else
+                {
+                    ViewBag.StatusMessage = "error occur <br/>" + string.Join("<br/>", result.Errors);
+                }
+            }
+
+
+            return View(model);
+        }
         //
         // POST: /Manage/RemoveLogin
         [HttpPost]
@@ -333,7 +360,7 @@ namespace HotelReservationSystem.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -384,6 +411,6 @@ namespace HotelReservationSystem.Controllers
             Error
         }
 
-#endregion
+        #endregion
     }
 }

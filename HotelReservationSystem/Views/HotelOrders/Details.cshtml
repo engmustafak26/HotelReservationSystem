@@ -1,0 +1,138 @@
+﻿@model HotelReservationSystem.Models.Order
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.HotelCustomerId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HotelCustomer.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.HotelId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Hotel.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Room.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DateOrdered)
+        </dt>
+
+        <dd>
+            @Model.DateOrdered.ToString("dd-MM-yyyy")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+
+        <dd>
+            @Model.StartDate.ToString("dd-MM-yyyy")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+
+        <dd>
+            @Model.EndDate.ToString("dd-MM-yyyy")
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NumberOfDays)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NumberOfDays)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FullPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FullPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RequesterUserId)
+        </dt>
+
+        <dd>
+
+            @if (!string.IsNullOrWhiteSpace(Model.RequesterUserId))
+            { 
+                <span>By Customer</span>
+            }
+            else
+            {
+                <span> By Employee "@Model.UpdatedByHotelAdminUser.Name"</span>
+            }
+
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CancelDate)
+        </dt>
+
+        <dd>
+            @(Model.CancelDate?.ToString("dd-MM-yyyy"))
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CancelPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CancelPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CancelUserId)
+        </dt>
+
+        <dd>
+
+            @if (string.IsNullOrWhiteSpace(Model.CancelUserId))
+            {
+                <span></span>
+            }
+            else if (Model.CancelUserId == Model.RequesterUserId)
+            {
+                <span>By Customer</span>
+            }
+            else
+            {
+                <span> By Employee "@Model.CancelUser.Name"</span>
+            }
+
+        </dd>
+
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Form", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

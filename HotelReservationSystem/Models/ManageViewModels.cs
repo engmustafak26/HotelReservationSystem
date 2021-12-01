@@ -7,8 +7,17 @@ namespace HotelReservationSystem.Models
 {
     public class IndexViewModel
     {
+        [Required]
+        [Display(Name = "Full Name")]
+        [StringLength(250, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 3)]
+
+        public string Name { get; set; }
+        public string Email { get; set; }
         public bool HasPassword { get; set; }
         public IList<UserLoginInfo> Logins { get; set; }
+
+        [Required]
+        [MaxLength(20)]
         public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }

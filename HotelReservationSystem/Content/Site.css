@@ -9,6 +9,17 @@
     padding-right: 15px;
 }
 
+.noPadding {
+    padding: 0 !important;
+}
+
+.editor-datetime {
+    position: relative !important;
+}
+
+.inlineDisplay {
+    display: inline-block !important;
+}
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */
@@ -23,10 +34,10 @@ textarea {
     max-width: 280px;
 }
 
-label.error{
+label.error {
     color: red;
 }
 
-input.error{
+input.error {
     border: 2px solid red;
 }

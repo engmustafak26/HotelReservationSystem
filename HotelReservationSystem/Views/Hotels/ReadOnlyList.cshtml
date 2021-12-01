@@ -14,8 +14,7 @@
             <th>Country</th>
             <th>City</th>
             <th>Stars</th>
-            <th>Price</th>
-            <th>AllInclusive</th>
+            <th>Active</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -34,30 +33,26 @@
                         dataSrc: ""
                     },
                     columns:
-                    [
-                        {
-                            data: "Name",
-                        },
-                        {
-                            data: "Country.Name",
-                        },
-                        {
-                            data: "City",
-                        },
-                        {
-                            data: "Stars",
-                        },
-                        {
-                            data: "PricePerNight",
-                        },
-                        {
-                            data: "IsAllInclusive",
-                            render: function (data, type, row) {
-                                return (data == true) ? "Yes" : "No";
+                        [
+                            {
+                                data: "Name",
+                            },
+                            {
+                                data: "Country.Name",
+                            },
+                            {
+                                data: "City",
+                            },
+                            {
+                                data: "Stars",
+                            },
+                            {
+                                data: "IsInactive",
+                                render: function (data, type, customer) {
+                                    return "<input type='checkbox' disabled readonly " + (customer.IsInactive ? "" : "checked") + "/>";
+                                }
                             }
-
-                        }
-                    ]
+                        ]
                 });
         });
     </script>

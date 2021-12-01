@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewBag.Title = "Reservations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="page-header">Reservations</h3>
+
+<div>
+    @Html.ActionLink("New Reservartion", "Form", "HotelOrders", null, new { @class = "btn btn-primary" })
+</div>
+<br />
+
+<table id="orders" class=" table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Number</th>
+            <th>Customer</th>
+            <th>Hotel</th>
+            <th>Room</th>
+            <th>Date Ordered</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Number Of Days</th>
+            <th>Full Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+@section scripts
+{
+    @*https://www.thecodehubs.com/datatables-plugin-server-side-integration-in-mvc-5/*@
+    <script>
+        $(document).ready(function () {
+            $("#orders").DataTable(
+                {
+                    "processing": true,
+                    "serverSide": true,
+                    "ordering": false,
+                    ajax:
+                    {
+                        url: "/HotelOrders/GetOrders",
+                        type: "POST",
+                        dataType: "JSON"
+                    },
+                    columns:
+                        [
+                            {
+                                data: "Id",
+                                render: function (data, type, order) {
+                                    if (order.RequesterUserId)
+                                        return "<span style='text-align: center; display: block'>" + order.Id + "</span>";
+
+                                    return "<a style='text-align: center; display: block' href='/HotelOrders/Form/" + order.Id + "'>" + order.Id + "</a>";
+                                }
+                            },
+                            {
+                                data: "HotelCustomer.Name",
+                            },
+                            {
+                                data: "Hotel.Name",
+                            },
+                            {
+                                data: "Room.Name",
+                            },
+                            {
+                                data: "DateOrdered",
+                                render: function (data, type) {
+                                    let d = moment(data, 'YYYY-MM-DD').format('DD-MM-YYYY');
+                                    return "<div>" + d + "</div>";
+                                }
+
+                            },
+                            {
+                                data: "StartDate",
+                                render: function (data, type) {
+                                    let d = moment(data, 'YYYY-MM-DD').format('DD-MM-YYYY');
+                                    return "<div>" + d + "</div>";
+                                }
+                            },
+                            {
+                                data: "EndDate",
+                                render: function (data, type) {
+                                    let d = moment(data, 'YYYY-MM-DD').format('DD-MM-YYYY');
+                                    return "<div>" + d + "</div>";
+                                }
+                            },
+                            {
+                                data: "NumberOfDays",
+                            },
+                            {
+                                data: "FullPrice",
+                                render: function (data, type) {                                   
+                                    return "<div>" + data + " EGP</div>";
+                                }
+                            },                            
+                            {
+                                data: "Id",
+                                render: function (data, type, order) {
+                                    let controls = "<a  class='btn-link' href='/HotelOrders/Details/" + order.Id + "'>Details</a> |";
+                                    if (!order.RequesterUserId)
+                                        controls += "<button class='btn-link js-delete' data-order-id=" + data + ">Delete</button> |";
+
+                                    return controls;
+                                }
+                            }
+                        ]
+                })
+
+
+
+            $("#orders").on('click', '.js-delete', function () {
+                var button = $(this);
+
+                bootbox.confirm("Are you sure you want to delete this order?", function (result) {
+                    if (result) {
+                        $.ajax(
+                            {
+                                url: "/HotelOrders/DeleteOrder/" + button.attr("data-order-id"),
+                                method: "DELETE",
+                                success: function (data) {
+                                    if (data.success) {
+                                        button.parents("tr").remove();
+                                        toastr.success("Order successfully removed.");
+                                    }
+                                    else
+                                        toastr.error(data.message);
+                                },
+                                error: ajaxError
+                            });
+                    }
+                });
+            });
+        });
+    </script>
+}
+

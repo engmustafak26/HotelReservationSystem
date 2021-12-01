@@ -5,22 +5,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 
 namespace HotelReservationSystem.Controllers
 {
+    [Authorize(Roles = RoleName.CanManageHotels)]
     public class HotelsController : Controller
     {
         private ApplicationDbContext _context;
+        private string _userId;
         public HotelsController()
         {
             _context = new ApplicationDbContext();
+            _userId = System.Web.HttpContext.Current.User.Identity.GetUserId();
         }
         protected override void Dispose(bool disposing)
         {
             _context.Dispose();
         }
 
-        [AllowAnonymous]
+        
         public ActionResult Index()
         {
             if (User.IsInRole(RoleName.CanManageHotels))
@@ -46,7 +50,7 @@ namespace HotelReservationSystem.Controllers
         [Authorize(Roles = RoleName.CanManageHotels)]
         public ActionResult Edit(int id)
         {
-            var hotel = _context.Hotels.SingleOrDefault(h => h.Id == id);
+            var hotel = _context.Hotels.SingleOrDefault(h => h.UserId == _userId && h.Id == id);
 
             if (hotel == null)
                 return HttpNotFound();
@@ -65,7 +69,8 @@ namespace HotelReservationSystem.Controllers
         [Authorize(Roles = RoleName.CanManageHotels)]
         public ActionResult Save(Hotel hotel)
         {
-            if(!ModelState.IsValid)
+            ModelState.Remove("hotel.UserId");
+            if (!ModelState.IsValid)
             {
                 var viewModel = new HotelViewModel()
                 {
@@ -77,16 +82,21 @@ namespace HotelReservationSystem.Controllers
             }
 
             if (hotel.Id == 0)
+            {
+                hotel.UserId = _userId;
                 _context.Hotels.Add(hotel);
+            }
             else
             {
-                var hotelInDb = _context.Hotels.Single(c => c.Id == hotel.Id);
+                var hotelInDb = _context.Hotels.Single(c => c.UserId == _userId && c.Id == hotel.Id);
                 hotelInDb.Name = hotel.Name;
                 hotelInDb.City = hotel.City;
                 hotelInDb.CountryId = hotel.CountryId;
-                hotelInDb.IsAllInclusive = hotel.IsAllInclusive;
-                hotelInDb.PricePerNight = hotel.PricePerNight;
                 hotelInDb.Stars = hotel.Stars;
+                hotelInDb.FreeCancelationDaysBeforeReservationDate = hotel.FreeCancelationDaysBeforeReservationDate;
+                hotelInDb.DeductionPercentageForReservationCancelation=hotel.DeductionPercentageForReservationCancelation;
+                hotelInDb.CheckinTime=hotel.CheckinTime;
+                hotelInDb.IsInactive = hotel.IsInactive;
             }
 
             _context.SaveChanges();
